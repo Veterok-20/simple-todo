@@ -1,0 +1,33 @@
+GET http://localhost:3000/api/todo
+
+###
+
+POST http://localhost:3000/api/todo
+Content-Type: application/json
+
+{
+    "name": "Learn CSS",
+    "completed": false
+}
+
+###
+
+
+POST http://localhost:3000/api/todo
+Content-Type: application/json
+
+{
+    "name": "Learn JS",
+    "completed": false
+}
+
+###
+
+
+POST http://localhost:3000/api/todo
+Content-Type: application/json
+
+{
+    "name": "Learn HTML",
+    "completed": true
+}
