@@ -10,9 +10,11 @@
 
 Устанавливаем зависимости и запускаем:
 
-`cd simple-todo`
-`npm i`
-`npm start`
+```sh
+cd simple-todo
+npm i
+npm start
+```
 
 Как конкретно запускается сервер можно посмотреть в файле package.json в скрипте start.
 
@@ -24,8 +26,10 @@
 
 Устанавливаем необходимые для работы приложения пакеты:
 
-`npm i express mysql2 sequelize`
-`npm i -D nodemon`
+```sh
+npm i express mysql2 sequelize
+npm i -D nodemon
+```
 
 Далее в файл `package.json` в раздел scripts необходимо добавить задачу start, которая будет запускать express сервер для работы API:
 
