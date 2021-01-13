@@ -10,7 +10,7 @@ const { Sequelize, DataTypes } = require('sequelize')
 // Конфигурируем подключение sequelize. Настройки базы данных (БД) устанавливаем свои.
 // Получаем сконфигурированный объект sequelize
 const sequelize = new Sequelize('DB_NAME', 'DB_USER', 'DB_PASSWORD', {
-    host: '109.206.169.221',
+    host: '127.0.0.1',
     dialect: 'mysql'
 });
 
@@ -80,6 +80,32 @@ function start() {
         res.send(todo)
     })
 
+    
+    app.patch('/api/todo/:id', async (req, res) => {
+        const todoId = req.params.todoId
+        const updateTodo = req.body
+        const dog = await Todo.update(updateTodo, {
+            where: {
+                id: todoId
+            }
+        })
+        res.send({
+            message: "Successful update"
+        })
+    })
+    
+    app.delete('/api/todo/:id', async (req, res) => {
+        const todoId = +req.params.todoId
+        await Todo.destroy({
+            where: {
+                id: todoId
+            }
+        })
+        res.send({
+            message: "Successful destroy"
+        })
+    })
+    
     // ############################################################################################
     // Здесь необходимо дописать свои роуты для чтения одной задачи, редактирования задачи и
     // удаления задачи. Необходимо опираться на тот код, который мы писали ранее.

@@ -1,10 +1,10 @@
-// @ts-check
+ // @ts-check
 // Скрипт запускается сразу после загрузки нашей страницы в браузер
 // Создаем переменную root в которой будет ссылка на DOM елемент (html элемент) с id="root"
 const root = document.getElementById('root')
 
-// Запускаем функцию отрисовки списка дел в элемент root
-drawMainPage()
+// Запускаем функцию отрисовки списка дел в элемент root   
+drawMainPage()  
 
 /**
  * Функция отрисовки списка дел. Функция асинхронная (async), поскольку в ней мы делаем запрос на сервер с
@@ -216,7 +216,7 @@ async function createTodo(todoname, completed) {
     if (response.ok) {
         // Запускаем функцию отрисовки списка дел в элемент root
         drawMainPage()
-    }
+    }  
 }
 
 /**
@@ -225,17 +225,97 @@ async function createTodo(todoname, completed) {
  * редактирования задачи на сервере. Это необходимо сделать вам самостоятельно.
  * @param {number} id Id задачи, которую необходимо отредактировать
  */
-function editTodo(id) {
-    // Пока просто выводим id задачи в консоль
-    console.log(id);
+async function editTodo(id) {
+    // Пока просто выводим id задачи в консоль    
+    //console.log(id);
+    const response = await fetch('/api/todo/'+ id)
+    if (response.ok) {
+        const todos = await response.json()       
+        drawEditTodoForm(todos)
+      }
+
+function drawEditTodoForm(todos) {
+    // Создаем текст с html внутренним содержанием формы
+    const formContent = /*html*/`
+        <label>Name: <input name="todoname" type="text" value="${todos.name}"/></label>
+        <label>Completed: <input name="completed" type="checkbox" value="${todos.completed}"/></label>
+        <button type="submit">Edit</button>
+    `
+    // Создаем элемент формы
+    const form = document.createElement('form')
+    // Добавляем к нему css класс todo-form
+    form.className = 'todo-form'
+    // Заполняем элемент формы html из переменной formContent
+    form.innerHTML = formContent
+
+    // Создаем кнопку сохранения задачи
+    const saveButton = document.createElement('button')
+    saveButton.className = 'button save-button'
+    saveButton.textContent = 'Save'
+    // Вешаем на кнопку обработчик, внутри которого вызываем функцию saveTodo(todo.id) с id задачи   
+    saveButton.addEventListener('click', () => {
+        saveTodo(todos)
+    })
+    // Добавляем в форму кнопку возврата
+    form.append(saveButton)
+
+    // Создаем кнопку возврата к списку задач
+    const backButton = document.createElement('button')
+    backButton.className = 'button back-button'
+    backButton.textContent = 'Back to main'
+    // Делаем обработчик click, который вызовет колбек, внутри которого вызывается функция отрисовки
+    // списка задач drawMainPage()
+    backButton.addEventListener('click', () => {
+        drawMainPage()
+    })
+     // Добавляем в форму кнопку возврата
+     form.append(backButton)
 }
 
+async function saveTodo(todos) {   
+   
+// Делаем PATCH запрос к нашему API с данными измененной задачи
+const response = await fetch('/api/todo/'+ todos.id, {
+    // Указываем метод http запроса
+    method: 'PATCH',
+    headers: {
+        // Указываем, что содержимым body будет json
+        'Content-Type': 'application/json'
+    },
+    // Обязательно превращаем объект новой задачи в строку с помощью функции JSON.stringify()
+    // В body можно передавать только строки
+    body: JSON.stringify(todos)
+})
+// Если статус код Http ответа сервера равен 200 
+if (response.ok) {
+    // Запускаем функцию отрисовки списка дел в элемент root
+    drawMainPage()
+}  
+}
+
+
+ 
 /**
  * Функция удаления задачи по id. Должна сначала вывести предупреждение об удалении. Потом если
  * подтвердили, необходимо сделать запрос к API на удаление задачи
  * @param {number} id Id задачи, которую необходимо удалить
  */
-function deleteTodo(id) {
+async function deleteTodo(id) {
     // Пока просто выводим id задачи в консоль
-    console.log(id);
+    //console.log(id);
+    const response = await fetch('/api/todo/'+ id)
+    if (response.ok) {
+        const todos = await response.json()       
+    let consent = confirm(`Запись ${todos.name} будет удалена!`);
+    if (consent) {
+        const response = await fetch('/api/todo/'+ todos.id, {
+            // Указываем метод http запроса
+            method: 'DELETE'
+        })         
+    } 
+    else {
+        drawMainPage()
+    }
+}  
+}
 }
