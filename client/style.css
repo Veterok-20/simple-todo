@@ -1,1 +1,44 @@
 /* Здесь должны быть ваши стили */
+/* * {
+    box-sizing: border-box;
+} */
+
+.container {
+  width: 450px;
+  height: 350px;
+  background-color: blanchedalmond;  
+  border: 3
+  px solid green;
+}
+
+.todo-list {
+  background-color: rgb(10, 168, 116);
+}
+
+.todo-form {
+
+}
+
+.todo {
+    
+}
+
+.button {
+
+}
+
+.button create-todo-button {
+
+} 
+
+.button back-button {
+
+}
+
+.button edit-button {
+
+}
+
+.button delete-button {
+
+}

@@ -74,7 +74,7 @@ async function drawMainPage() {
     }
 }
 
-/**
+/**  
  * Функция отрисовки формы создания новой задачи
  */
 function drawCreateTodoForm() {
@@ -132,7 +132,7 @@ function drawCreateTodoForm() {
     // Добавляем в root кнопку возврата
     root.append(backButton)
     // Добавляем в root форму
-    root.append(form)
+    root.append(form) 
 }
 
 /**
@@ -230,16 +230,17 @@ async function editTodo(id) {
     //console.log(id);
     const response = await fetch('/api/todo/'+ id)
     if (response.ok) {
-        const todos = await response.json()       
-        drawEditTodoForm(todos)
+        const todo = await response.json()       
+        drawEditTodoForm(todo)
       }
+    }
 
-function drawEditTodoForm(todos) {
+function drawEditTodoForm(todo) {
     // Создаем текст с html внутренним содержанием формы
     const formContent = /*html*/`
-        <label>Name: <input name="todoname" type="text" value="${todos.name}"/></label>
-        <label>Completed: <input name="completed" type="checkbox" value="${todos.completed}"/></label>
-        <button type="submit">Edit</button>
+        <label>Name: <input name="todoname" type="text" value="${todo.name}"/></label>
+        <label>Completed: <input name="completed" type="checkbox" value="${todo.completed}"/></label>
+        <button type="submit" class="button save-button">Save</button>
     `
     // Создаем элемент формы
     const form = document.createElement('form')
@@ -248,16 +249,23 @@ function drawEditTodoForm(todos) {
     // Заполняем элемент формы html из переменной formContent
     form.innerHTML = formContent
 
-    // Создаем кнопку сохранения задачи
-    const saveButton = document.createElement('button')
-    saveButton.className = 'button save-button'
-    saveButton.textContent = 'Save'
-    // Вешаем на кнопку обработчик, внутри которого вызываем функцию saveTodo(todo.id) с id задачи   
-    saveButton.addEventListener('click', () => {
-        saveTodo(todos)
-    })
-    // Добавляем в форму кнопку возврата
-    form.append(saveButton)
+    form.addEventListener('submit', event => {
+    event.preventDefault()
+
+    const inputTodoName = form.todoname
+    // Аналогично для второго input
+    const inputCompleted = form.completed
+    // Т.к. первый input имеет аттрибут type="text", то это обычный input для ввода текста. Для
+    // извлечения из него текста используется свойство value
+    const todoname = inputTodoName.value
+    // Второй input имеет аттрибут type="checkbox", что значит, что это checkbox элемент. И у
+    // него есть только два значения: true или false. Получить их можно с помощью свойства checked
+    const completed = inputCompleted.checked
+    // Запускаем функцию createTodo, которая отправит на сервер запрос на создание новой задачи,
+    // после чего отрисует весь список задач внутрь элемента root
+    // saveTodo(id: todo.id, name: todoname, completed);
+    saveTodo(todo.id, todoname, completed);
+    })  
 
     // Создаем кнопку возврата к списку задач
     const backButton = document.createElement('button')
@@ -270,12 +278,18 @@ function drawEditTodoForm(todos) {
     })
      // Добавляем в форму кнопку возврата
      form.append(backButton)
+     root.innerHTML = ''
+     root.append(form)
 }
 
-async function saveTodo(todos) {   
-   
+async function saveTodo(todoid, todoname, completed) {   
+    const newTodo = {
+        id: todoid,
+        name: todoname,
+        completed: completed
+    }
 // Делаем PATCH запрос к нашему API с данными измененной задачи
-const response = await fetch('/api/todo/'+ todos.id, {
+const response = await fetch('/api/todo/'+ todoid, {
     // Указываем метод http запроса
     method: 'PATCH',
     headers: {
@@ -284,11 +298,12 @@ const response = await fetch('/api/todo/'+ todos.id, {
     },
     // Обязательно превращаем объект новой задачи в строку с помощью функции JSON.stringify()
     // В body можно передавать только строки
-    body: JSON.stringify(todos)
+    body: JSON.stringify(newTodo)
 })
 // Если статус код Http ответа сервера равен 200 
 if (response.ok) {
     // Запускаем функцию отрисовки списка дел в элемент root
+    root.innerHTML = ''
     drawMainPage()
 }  
 }
@@ -305,17 +320,21 @@ async function deleteTodo(id) {
     //console.log(id);
     const response = await fetch('/api/todo/'+ id)
     if (response.ok) {
-        const todos = await response.json()       
-    let consent = confirm(`Запись ${todos.name} будет удалена!`);
+        const todo = await response.json()       
+    let consent = confirm(`Запись ${todo.name} будет удалена!`);
     if (consent) {
-        const response = await fetch('/api/todo/'+ todos.id, {
+        const response = await fetch('/api/todo/'+ id, {
             // Указываем метод http запроса
             method: 'DELETE'
-        })         
+        })  
+        if (response.ok) { 
+            root.innerHTML = ''
+            drawMainPage()  
+        }          
     } 
-    else {
-        drawMainPage()
-    }
+    // else {
+    //     root.innerHTML = ''
+    //     drawMainPage()
+    // }
 }  
-}
 }

@@ -9,8 +9,8 @@ const { Sequelize, DataTypes } = require('sequelize')
 
 // Конфигурируем подключение sequelize. Настройки базы данных (БД) устанавливаем свои.
 // Получаем сконфигурированный объект sequelize
-const sequelize = new Sequelize('DB_NAME', 'DB_USER', 'DB_PASSWORD', {
-    host: '127.0.0.1',
+const sequelize = new Sequelize('animals_ov4_Zoya', 'Zoya_ov4', 'H587ta', {
+    host: '109.206.169.221',
     dialect: 'mysql'
 });
 
@@ -81,12 +81,19 @@ function start() {
     })
 
     
+    app.get('/api/todo/:id', async (req, res) => {
+        const todo = await Todo.findByPk(req.params.id)
+        // Посылаем задачи обратно в браузер
+        res.send(todo)
+    }) 
+
+
     app.patch('/api/todo/:id', async (req, res) => {
-        const todoId = req.params.todoId
-        const updateTodo = req.body
-        const dog = await Todo.update(updateTodo, {
+        const id = req.params.id
+        const patchTodo = req.body
+        const todo = await Todo.update(patchTodo, {
             where: {
-                id: todoId
+                id: id
             }
         })
         res.send({
@@ -95,10 +102,10 @@ function start() {
     })
     
     app.delete('/api/todo/:id', async (req, res) => {
-        const todoId = +req.params.todoId
+        const id = +req.params.id
         await Todo.destroy({
             where: {
-                id: todoId
+                id: id
             }
         })
         res.send({
