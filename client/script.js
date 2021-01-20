@@ -321,20 +321,19 @@ async function deleteTodo(id) {
     const response = await fetch('/api/todo/'+ id)
     if (response.ok) {
         const todo = await response.json()       
-    let consent = confirm(`Запись ${todo.name} будет удалена!`);
-    if (consent) {
-        const response = await fetch('/api/todo/'+ id, {
-            // Указываем метод http запроса
-            method: 'DELETE'
-        })  
-        if (response.ok) { 
-            root.innerHTML = ''
-            drawMainPage()  
-        }          
-    } 
-    // else {
-    //     root.innerHTML = ''
-    //     drawMainPage()
-    // }
+    // let consent = confirm(`Запись ${todo.name} будет удалена!`);
+    // if (consent) {
+    //     const response = await fetch('/api/todo/'+ id, {
+    //         // Указываем метод http запроса
+    //         method: 'DELETE'
+    //     })  
+    //     if (response.ok) { 
+    //         root.innerHTML = ''
+    //         drawMainPage()  
+    //     }          
+    // } 
+       const consentBlock = `<div position="absolut" display=>Запись ${todo.name} будет удалена!</div>`
+
+
 }  
 }
