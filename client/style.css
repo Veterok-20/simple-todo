@@ -1,91 +1,143 @@
 /* Здесь должны быть ваши стили */
+
 * {
-    /* box-sizing: border-box; */
+  box-sizing: border-box;
 }
 
 body {
   display: flex;  
+  width: 100%;
+  height: 100vh;
   justify-content: center;
   align-items: center; 
  
 }
 .container {
-  display: inline-flex; 
-  /* align-items: center; */
-  position:relative; 
+  display: flex; 
+  align-items: center;  
   width: 70%;  
-  height: 70vh;
-  /* top: 50%;
-  left: 50%; */
-  /* right: 0%; */
-  /* bottom: 0%; */
-  /* margin:auto; */
-  justify-content: center;
-  
-
+  height: 70vh;    
+  flex-direction: column;
   background-color: blanchedalmond;  
-  border: 3px solid green;
+  border: 5px solid green;
 }
 
 .header {
-justify-content: center;
 font-size: 2em;
 color: rgb(10, 168, 116);
 -webkit-text-stroke-width: 1px;
 -webkit-text-stroke-color: black;
+margin-bottom: 70px;
 }
 
-.todo-list {
-  /* display: flex; */
-  --width: 93%;
-  --height: 35vh;
-  font-size: 1.7em;
-  position: absolute;
-  top: 100px;
-  left: 20px;
-  background-color: rgb(10, 168, 116);
-  width: var(--width);
-  height: var(--height);
+.root {
+  position: relative; 
+  display: flex;
+  flex-direction: column;  
+  align-items: center; 
+  width: 80%;
+  height: 40vh;
+  background-color: cornflowerblue;
+  border: 3px solid green;
+  padding-top: 20px;
+  padding-bottom: 10px;
+  overflow: auto;
+}
 
-
+.todo-list {  
+  margin-bottom: 50px;
+  background-color: chartreuse;
+  width: 80%;
+  height: 80%;
+  overflow: auto;
 }
 
 .todo-form {
-
+  width: 500px;
+  height: 30px;
+  font-size: 1.4em;
+  margin-top: 30px;
+  background-color: darkcyan;
 }
 
 .todo {
-    
+  display: flex;
+
+}
+
+.text {
+  width: 70%;
+  font-size: 1.6em;
+  margin-bottom: 30px;
+
 }
 
 .button {
-width:80px;
+width:60px;
 height: 35px;
 border: 2px solid black;
-border-radius: 8px;
-font-size: 0.6em;
+border-radius: 6px;
+font-size: 0.9em;
 box-shadow: 1.2 1.2 10px rgba(0, 0, 0, 0.87);
+margin-right:8px;
+box-shadow:
+   0 1px rgba(255,255,255,.2) inset,
+   0 3px 5px rgba(0,1,6,.5),
+   0 0 1px 1px rgba(0,1,6,.2);   
+}
+
+.button:active {
+  top: 1px;
+  background: linear-gradient(rgb(176, 177, 180), rgb(162, 164, 175)) rgb(176,177,180);
+  box-shadow:
+   0 0 1px rgba(90, 75, 75, 0.5) inset,
+   0 2px 3px rgba(0,0,0,.5) inset,
+   0 1px 1px rgba(255,255,255,.1);
 }
 
 .create-todo-button {
-  /* position: absolute; */
-  top: calc(var(--height)+200);
-  left: 20px;
+  width: 80px;
+  height: 40px;
   
 } 
 
-.button back-button {
+.back-button {
+width: 80px;
+height: 40px;
+margin-top: 100px;
+}
+
+.consent-delete {
+  position: absolute;
+  top: 30px;
+  left: 60px;
+  width: calc(100% * 2/3);
+  height: calc(100% * 2/3);
+  border:6px solid crimson;
+  background-color: bisque;
+  display: flex;
+  flex-direction: column;  
+  align-items: center;   
+  padding-top: 30px;  
+  
+}
+
+.consentText {
+  text-align: center;
+  font-size: 1.4em;
 
 }
 
-.button edit-button {
-/* margin-right: 100px; */
+.buttonSet {
+  margin-top: calc(100% * 0.8/3);
+  font-size: 0.9em;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
-.delete-button {
-  right: 100px;
+.Ok-button {
+  margin-right: calc((100% - 120px)/2);
+  
 }
-
-.delete {
-
-}
+  

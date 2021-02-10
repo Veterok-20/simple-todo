@@ -52,6 +52,7 @@ async function drawMainPage() {
         }
         // Очищаем root элемент от старого html прежде чем добавлять в него новые элементы
         root.innerHTML = ''
+        root.className = 'root'
         // Добавляем в элемент root элемент todoList. Список дел должен появиться внутри root
         root.append(todoList)
         // Создаем элемент кнопки, которая будет выводить на экран форму создания новой задачи
@@ -129,10 +130,11 @@ function drawCreateTodoForm() {
     })
     // Перед добавлением контента в root очищаем сам root
     root.innerHTML = ''
-    // Добавляем в root кнопку возврата
-    root.append(backButton)
     // Добавляем в root форму
     root.append(form) 
+    // Добавляем в root кнопку возврата
+    root.append(backButton)
+    
 }
 
 /**
@@ -148,7 +150,9 @@ function drawCreateTodoForm() {
 function drawTodoElement(todo) {
     // Создаем todoElement для одной задачи
     const todoElement = document.createElement('div')
+    const todoElementText = document.createElement('div')
     todoElement.className = 'todo'
+    todoElementText.className = 'text'
     // Здесь используем тернарный оператор (один из вариантов условного оператора). Подробнее про
     // тернарный оператор: https://learn.javascript.ru/ifelse#uslovnyy-operator
     // Если задача выполнена, т.е. (todo.completed === true), то textDecoration равен
@@ -159,7 +163,7 @@ function drawTodoElement(todo) {
     // text-decoration, который равен значению из переменной textDecoration. Т.е. текст в этом
     // строчном элементе span будет либо зачеркнутым (если (todo.completed === true)), либо нет
     // Подробно: https://webref.ru/html/attr/style
-    todoElement.innerHTML = `<span style="text-decoration: ${textDecoration}">${todo.name}</span> `
+    todoElementText.innerHTML = `<span style="text-decoration: ${textDecoration}">${todo.name}</span> `
 
     // Создаем кнопку редактирования задачи
     const editButton = document.createElement('button')
@@ -181,6 +185,7 @@ function drawTodoElement(todo) {
         deleteTodo(todo.id)
     }
     // Добавляем кнопки в todoElement
+    todoElement.append(todoElementText);
     todoElement.append(editButton)
     todoElement.append(deleteButton)
     // Возвращаем DOM элемент todoElement
@@ -240,7 +245,7 @@ function drawEditTodoForm(todo) {
     const formContent = /*html*/`
         <label>Name: <input name="todoname" type="text" value="${todo.name}"/></label>
         <label>Completed: <input name="completed" type="checkbox" value="${todo.completed}"/></label>
-        <button type="submit" class="button save-button">Save</button>
+        <button type="submit">Save</button>
     `
     // Создаем элемент формы
     const form = document.createElement('form')
@@ -275,18 +280,18 @@ function drawEditTodoForm(todo) {
     // списка задач drawMainPage()
     backButton.addEventListener('click', () => {
         drawMainPage()
-    })
-     // Добавляем в форму кнопку возврата
-     form.append(backButton)
+    })     
      root.innerHTML = ''
      root.append(form)
+     // Добавляем в форму кнопку возврата
+     root.append(backButton)
 }
 
 async function saveTodo(todoid, todoname, completed) {   
     const newTodo = {
         id: todoid,
         name: todoname,
-        completed: completed
+        completed: completed 
     }
 // Делаем PATCH запрос к нашему API с данными измененной задачи
 const response = await fetch('/api/todo/'+ todoid, {
@@ -303,8 +308,8 @@ const response = await fetch('/api/todo/'+ todoid, {
 // Если статус код Http ответа сервера равен 200 
 if (response.ok) {
     // Запускаем функцию отрисовки списка дел в элемент root
-    root.innerHTML = ''
-    drawMainPage()
+    // root.innerHTML = ''
+    // drawMainPage()
 }  
 }
 
@@ -318,9 +323,54 @@ if (response.ok) {
 async function deleteTodo(id) {
     // Пока просто выводим id задачи в консоль
     //console.log(id);
-    const response = await fetch('/api/todo/'+ id)
+    let consentBlock = document.createElement('div');
+    consentBlock.className = 'consent-delete';   
+    root.append(consentBlock);
+
+
+    const response = await fetch('/api/todo/'+ id);         
     if (response.ok) {
-        const todo = await response.json()       
+       const todo = await response.json();
+       const consentText = document.createElement('div');
+       consentText.className = 'consentText';
+    //    const consentText = `<div>Запись <b>${todo.name}</b> будет удалена!</div>`; 
+    //    consentBlock.innerHTML = consentText;
+       consentText.innerHTML = `<div>Запись <b>${todo.name}</b> будет удалена!</div>`;
+       consentBlock.append(consentText);
+    }
+
+    const OkButton = document.createElement('button');
+    OkButton.className = 'button Ok-button';
+    OkButton.textContent = 'Ok';   
+    OkButton.addEventListener('click', async () => {
+       const response = await fetch('/api/todo/'+ id, {
+        method: 'DELETE' 
+       }); 
+       if (response.ok) {
+          
+       root.innerHTML = '';
+       drawMainPage();
+    }    
+})
+
+    const CanselButton = document.createElement('button')    
+    CanselButton.className = 'button Cancel-button'
+    CanselButton.textContent = 'Cancel'   
+    CanselButton.addEventListener('click', () => {
+        
+        root.innerHTML = '';
+       drawMainPage();    
+})
+    const ButtonSet = document.createElement('div')
+    ButtonSet.className = 'buttonSet';
+    ButtonSet.append(OkButton);
+    ButtonSet.append(CanselButton);
+    
+    consentBlock.append(ButtonSet);
+    
+    
+}
+
     // let consent = confirm(`Запись ${todo.name} будет удалена!`);
     // if (consent) {
     //     const response = await fetch('/api/todo/'+ id, {
@@ -332,8 +382,8 @@ async function deleteTodo(id) {
     //         drawMainPage()  
     //     }          
     // } 
-       const consentBlock = `<div position="absolut" display=>Запись ${todo.name} будет удалена!</div>`
+      
 
 
-}  
-}
+
+
